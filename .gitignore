@@ -1,5 +1,7 @@
 .vscode
 .idea
+.aws
+.aws/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
