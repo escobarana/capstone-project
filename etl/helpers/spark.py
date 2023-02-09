@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 from pyspark.sql import SparkSession, DataFrame
-import os
 from pyspark import SparkConf, SparkContext
 
 load_dotenv()
@@ -14,7 +13,10 @@ conf = (
         "net.snowflake:spark-snowflake_2.12:2.9.0-spark_3.1,"
         "net.snowflake:snowflake-jdbc:3.13.3",
     )
-    .set("fs.s3a.aws.credentials.provider", "com.amazonaws.auth.DefaultAWSCredentialsProviderChain")
+    .set(
+        "fs.s3a.aws.credentials.provider",
+        "com.amazonaws.auth.DefaultAWSCredentialsProviderChain",
+    )
 )
 
 spark = SparkSession.builder.config(conf=conf).getOrCreate()
