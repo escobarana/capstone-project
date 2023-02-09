@@ -22,17 +22,12 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
+      - run: docker build --tag capstone-ana:v1.0.0 .
+
+      - name: Login to Amazon ECR and push Docker image
+        uses: jwalton/gh-ecr-push@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION_NAME }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-            context: .
-            file: ./Dockerfile
-            push: true
-            tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
+          region: ${{ secrets.AWS_REGION_NAME }}
+          image: capstone-ana:v1.0.0
