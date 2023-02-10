@@ -17,15 +17,12 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Upload DAGs to S3
-        uses: mostlytyped/s3-put-action@v1.0.0
+      - name: Upload DAG to S3 Bucket
+        uses: swimlane/s3-upload-file-action@master
         with:
-          args: --acl-public
-        env:
-          LOCAL_FILE: dags/batch_job.py
-          REMOTE_FILE: dags/ana-dag.py
-          AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
-          AWS_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # INCLUDE_SHA256: true
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.S3_BUCKET_NAME }}
+          file_path: 'dags/batch_job.py'
+          file_mime_type: 'application/x-python-code'
+          dest_dir: 'dags'
