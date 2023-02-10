@@ -6,11 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 jobs:
   push_to_registry:
     name: Push Docker image to ECR
@@ -22,20 +17,24 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - run: docker build --tag capstone-ana:v1.0.0 .
-
-      - name: Login to Amazon ECR
-        uses: jwalton/gh-ecr-push@v1
+      - name: Login to AWS ECR
+        id: ecr
+        uses: jwalton/gh-ecr-login@v1
+        env:
+          AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: ${{ secrets.AWS_REGION_NAME }}
-          image: capstone-ana:v1.0.0
+          access-key-id: $AWS_ACCESS_KEY_ID
+          secret-access-key: $AWS_SECRET_ACCESS_KEY
+          region: $AWS_REGION_NAME
 
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-            context: .
-            file: ./Dockerfile
-            push: true
-            tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
+      - name: Push Docker Image to ECR
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION_NAME: ${{ secrets.AWS_REGION_NAME }}
+          REPOSITORY_NAME: ${{ secrets.REPOSITORY_NAME }}
+        run: |
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION_NAME.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG .
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION_NAME.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
