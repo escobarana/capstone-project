@@ -1,0 +1,31 @@
+name: Build and push Docker image to ECR
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to ECR
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Login to AWS ECR
+        id: ecr
+        uses: jwalton/gh-ecr-login@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ secrets.AWS_REGION_NAME }}
+
+      - name: Push Docker Image to ECR
+        run: |
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }} .
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION_NAME }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:${{ github.sha }}
