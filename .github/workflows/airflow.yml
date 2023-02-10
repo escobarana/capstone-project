@@ -17,12 +17,14 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Upload DAG to S3 Bucket
-        uses: swimlane/s3-upload-file-action@master
+      - name: Upload DAF file to S3 bucket
+        uses: zdurham/s3-upload-github-action@master
         with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-          aws_bucket: ${{ secrets.S3_BUCKET_NAME }}
-          file_path: 'dags/batch_job.py'
-          file_mime_type: 'application/x-python-code'
-          dest_dir: 'dags'
+          args: --acl public-read
+        env:
+          FILE: dags/batch_job.py
+          AWS_REGION: ${{ secrets.AWS_REGION_NAME }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+          S3_KEY: airflow_ana.py
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
