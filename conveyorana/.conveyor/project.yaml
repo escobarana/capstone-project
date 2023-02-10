@@ -1,0 +1,13 @@
+docker:
+    path: .
+id: 8a435cd1-ea98-4a93-8c25-e1a4aeacec2e
+name: conveyorana
+resources:
+    path: resources
+streaming:
+    filename: streaming.yaml
+template: pyspark
+version: "0.3"
+workflows:
+    path: dags
+    version: "2"
