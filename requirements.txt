@@ -2,5 +2,6 @@ pyspark==3.1.2
 pytest==6.2.5
 requests
 black
-python-dotenv
-boto3
+python-dotenv~=0.21.1
+boto3~=1.26.67
+apache-airflow==2.3.4

@@ -1,0 +1,27 @@
+name: Upload Airflow DAGs to S3
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  upload_dags:
+    name: Upload Airflow DAGs to S3
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dags
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Upload DAGs to S3
+        uses: shallwefootball/s3-upload-action@master
+        with:
+          aws_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_bucket: ${{ secrets.S3_BUCKET_NAME }}
+          source_dir: 'dags'
+          destination_dir: 'dags'

@@ -1,6 +1,6 @@
 from etl.scripts.transform import clean_dataframe
 from helpers.spark import get_spark_session, get_s3_data
-from helpers.snowflake import load_data_snowflake, get_snowflake_credentials
+from helpers.snowflake import load_data_snowflake
 
 spark = get_spark_session()
 
